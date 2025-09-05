@@ -46,7 +46,63 @@ function SelectGrid(e) {
   document.addEventListener('keypress', PutNum);
   boxNumbers.addEventListener('click', PutNumClick);
 }
+document.addEventListener('click', function (e) {
+  if (!e.target.parentElement.classList.contains('container')) {
+    allGrid.forEach((elem) => {
+      elem.style.backgroundColor = 'white';
+    });
+  }
+});
 Container.addEventListener('click', SelectGrid);
+
+PutNumEachBox();
+
+function findCord(row, col, wasVerified, visualArr) {
+  if (!wasVerified[row][col]) {
+    if (!wasVerified[row][col]) {
+      wasVerified[row][col] = true;
+
+      const found = row * 9 + col;
+
+      console.log(visualArr[row][col]);
+      allGrid[found].innerText = visualArr[row][col];
+
+      return allGrid[found].innerText;
+    } else {
+      let randomNumCol = Math.floor(Math.random() * 9);
+      let randomNumRow = Math.floor(Math.random() * 9);
+      return findCord(randomNumRow, randomNumCol, wasVerified, visualArr);
+    }
+  }
+}
+
+function PutNumEachBox() {
+  let mainSdarr = SudokuGenerator();
+  let visualArr = mainSdarr.slice();
+
+  let wasVerified = Array.from({ length: 9 }, () => Array(9).fill(false));
+  f = 0;
+
+  for (let i = 0; i <= 25; i++) {
+    let randomNumCol = Math.floor(Math.random() * 9);
+    let randomNumRow = Math.floor(Math.random() * 9);
+
+    findCord(randomNumRow, randomNumCol, wasVerified, visualArr);
+  }
+}
+// Binary search algorithm
+function FindSimilarity(wasNum, randomNum) {
+  if (wasNum.length === 0) return false;
+  let left = 0,
+    right = wasNum.length - 1;
+  while (left <= right) {
+    middle = Math.floor((right + left) / 2);
+    if (randomNum < wasNum[middle]) right = middle - 1;
+    else if (randomNum > wasNum[middle]) left = middle + 1;
+    else if (randomNum === wasNum[middle]) return true;
+  }
+  return false;
+}
 
 //-----------------Sudoku logic implementation-------------------------//
 function FindNumber(sk, nums, i, j) {
@@ -112,5 +168,3 @@ function CheckRow(sk, num, row) {
   }
   return true;
 }
-
-console.log(SudokuGenerator());
