@@ -48,25 +48,69 @@ function SelectGrid(e) {
 }
 Container.addEventListener('click', SelectGrid);
 
-//-----------------Sudoku sections-------------------------//
+//-----------------Sudoku logic implementation-------------------------//
+function FindNumber(sk, nums, i, j) {
+  if (nums.length === 0) return null;
+
+  let pos = Math.floor(Math.random() * nums.length);
+  let num = nums[pos];
+
+  if (
+    CheckBox(sk, num, i, j) &&
+    CheckRow(sk, num, i) &&
+    CheckColumn(sk, num, j)
+  ) {
+    return num;
+  }
+
+  // Try with remaining numbers
+  let remaining = nums.filter((_, index) => index !== pos);
+  return FindNumber(sk, remaining, i, j);
+}
 
 function SudokuGenerator() {
-  let sk = [];
+  let sk = Array.from({ length: 9 }, () => Array(9).fill(0));
   let numGrid = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  let copyedGried = numGrid;
 
   for (let i = 0; i < 9; i++) {
-    sk[i] = [];
     for (let j = 0; j < 9; j++) {
-      let pos = Math.floor(Math.random() * 9);
-      sk[i][j] = copyedGried[pos];
-      copyedGried.filter((elem, index) => index !== 1);
+      let copyedGried = numGrid.slice();
+      let value = FindNumber(sk, copyedGried, i, j);
+      if (value !== null) {
+        sk[i][j] = value;
+      } else {
+        return SudokuGenerator(); // Retry from scratch
+      }
     }
   }
+
   return sk;
 }
-function CheckBox() {}
-function CheckColumn() {}
-function CheckRow() {}
-// console.log(Math.floor(Math.random() * 9));
+
+function CheckBox(sk, num, i, j) {
+  let startRow = i - (i % 3);
+  let startCol = j - (j % 3);
+
+  for (let row = startRow; row < startRow + 3; row++) {
+    for (let col = startCol; col < startCol + 3; col++) {
+      if (sk[row][col] === num) return false;
+    }
+  }
+  return true;
+}
+
+function CheckColumn(sk, num, col) {
+  for (let row = 0; row < 9; row++) {
+    if (sk[row][col] === num) return false;
+  }
+  return true;
+}
+
+function CheckRow(sk, num, row) {
+  for (let col = 0; col < 9; col++) {
+    if (sk[row][col] === num) return false;
+  }
+  return true;
+}
+
 console.log(SudokuGenerator());
