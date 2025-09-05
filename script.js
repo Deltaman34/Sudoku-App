@@ -46,5 +46,27 @@ function SelectGrid(e) {
   document.addEventListener('keypress', PutNum);
   boxNumbers.addEventListener('click', PutNumClick);
 }
-
 Container.addEventListener('click', SelectGrid);
+
+//-----------------Sudoku sections-------------------------//
+
+function SudokuGenerator() {
+  let sk = [];
+  let numGrid = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  let copyedGried = numGrid;
+
+  for (let i = 0; i < 9; i++) {
+    sk[i] = [];
+    for (let j = 0; j < 9; j++) {
+      let pos = Math.floor(Math.random() * 9);
+      sk[i][j] = copyedGried[pos];
+      copyedGried.filter((elem, index) => index !== 1);
+    }
+  }
+  return sk;
+}
+function CheckBox() {}
+function CheckColumn() {}
+function CheckRow() {}
+// console.log(Math.floor(Math.random() * 9));
+console.log(SudokuGenerator());
